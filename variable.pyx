@@ -48,7 +48,6 @@ cdef class var:
     def i(self):
         self.thisptr.i()
     def f(self, var a, var b, op):
-        print(op)
         cdef char s
         s = ord(op[0])
         cdef Variable *l = &a.thisptr
