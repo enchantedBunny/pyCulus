@@ -445,6 +445,11 @@ static CYTHON_INLINE float __PYX_NAN() {
 #define __PYX_HAVE_API__pyCalc
 #include <string.h>
 #include <stdlib.h>
+#include <string>
+#include "ios"
+#include "new"
+#include "stdexcept"
+#include "typeinfo"
 #include "Variable.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -649,8 +654,8 @@ static const char *__pyx_f[] = {
 struct __pyx_obj_6pyCalc_var;
 struct __pyx_obj___Pyx_EnumMeta;
 
-/* "variable.pyx":19
- * 
+/* "variable.pyx":23
+ * cdef int b = 0
  * 
  * cdef class var:             # <<<<<<<<<<<<<<
  *     cdef:
@@ -1005,6 +1010,9 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_char(char value);
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
+
 /* Print.proto */
 static int __Pyx_Print(PyObject*, PyObject *, int);
 #if CYTHON_COMPILING_IN_PYPY || PY_MAJOR_VERSION >= 3
@@ -1038,11 +1046,14 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from 'libc.stdlib' */
 
+/* Module declarations from 'libcpp.string' */
+
 /* Module declarations from 'cython' */
 
 /* Module declarations from 'pyCalc' */
 static PyTypeObject *__pyx_ptype_6pyCalc_var = 0;
 static PyTypeObject *__pyx_ptype___Pyx_EnumMeta = 0;
+static int __pyx_v_6pyCalc_b;
 static PyObject *__Pyx_OrderedDict = 0;
 static PyObject *__Pyx_EnumBase = 0;
 static PyObject *__Pyx_globals = 0;
@@ -1180,7 +1191,7 @@ static PyObject *__pyx_codeobj__2;
 static PyObject *__pyx_codeobj__5;
 static PyObject *__pyx_codeobj__7;
 
-/* "variable.pyx":26
+/* "variable.pyx":30
  *         var l
  *         var r
  *     def op(self):             # <<<<<<<<<<<<<<
@@ -1207,21 +1218,21 @@ static PyObject *__pyx_pf_6pyCalc_3var_op(struct __pyx_obj_6pyCalc_var *__pyx_v_
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("op", 0);
 
-  /* "variable.pyx":27
+  /* "variable.pyx":31
  *         var r
  *     def op(self):
  *         return self.thisptr.op             # <<<<<<<<<<<<<<
  *     def __cinit__(self):
- *         self.thisptr = Variable()
+ *         global b
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_char(__pyx_v_self->thisptr.op); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_char(__pyx_v_self->thisptr.op); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "variable.pyx":26
+  /* "variable.pyx":30
  *         var l
  *         var r
  *     def op(self):             # <<<<<<<<<<<<<<
@@ -1240,12 +1251,12 @@ static PyObject *__pyx_pf_6pyCalc_3var_op(struct __pyx_obj_6pyCalc_var *__pyx_v_
   return __pyx_r;
 }
 
-/* "variable.pyx":28
+/* "variable.pyx":32
  *     def op(self):
  *         return self.thisptr.op
  *     def __cinit__(self):             # <<<<<<<<<<<<<<
- *         self.thisptr = Variable()
- *     def value(self, pyfloats):
+ *         global b
+ *         b +=1
  */
 
 /* Python wrapper */
@@ -1267,34 +1278,71 @@ static int __pyx_pw_6pyCalc_3var_3__cinit__(PyObject *__pyx_v_self, PyObject *__
 static int __pyx_pf_6pyCalc_3var_2__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_v_self) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "variable.pyx":29
- *         return self.thisptr.op
+  /* "variable.pyx":34
  *     def __cinit__(self):
+ *         global b
+ *         b +=1             # <<<<<<<<<<<<<<
+ *         self.thisptr = Variable()
+ *         self.thisptr.setID(b);
+ */
+  __pyx_v_6pyCalc_b = (__pyx_v_6pyCalc_b + 1);
+
+  /* "variable.pyx":35
+ *         global b
+ *         b +=1
  *         self.thisptr = Variable()             # <<<<<<<<<<<<<<
- *     def value(self, pyfloats):
- *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
+ *         self.thisptr.setID(b);
+ *         print(self.thisptr.id)
  */
   __pyx_v_self->thisptr = calc::Variable();
 
-  /* "variable.pyx":28
+  /* "variable.pyx":36
+ *         b +=1
+ *         self.thisptr = Variable()
+ *         self.thisptr.setID(b);             # <<<<<<<<<<<<<<
+ *         print(self.thisptr.id)
+ *     def value(self, pyfloats):
+ */
+  __pyx_v_self->thisptr.setID(__pyx_v_6pyCalc_b);
+
+  /* "variable.pyx":37
+ *         self.thisptr = Variable()
+ *         self.thisptr.setID(b);
+ *         print(self.thisptr.id)             # <<<<<<<<<<<<<<
+ *     def value(self, pyfloats):
+ *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->thisptr.id); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "variable.pyx":32
  *     def op(self):
  *         return self.thisptr.op
  *     def __cinit__(self):             # <<<<<<<<<<<<<<
- *         self.thisptr = Variable()
- *     def value(self, pyfloats):
+ *         global b
+ *         b +=1
  */
 
   /* function exit code */
   __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("pyCalc.var.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "variable.pyx":30
- *     def __cinit__(self):
- *         self.thisptr = Variable()
+/* "variable.pyx":38
+ *         self.thisptr.setID(b);
+ *         print(self.thisptr.id)
  *     def value(self, pyfloats):             # <<<<<<<<<<<<<<
  *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
  *         print('get it')
@@ -1325,26 +1373,26 @@ static PyObject *__pyx_pf_6pyCalc_3var_4value(struct __pyx_obj_6pyCalc_var *__py
   float __pyx_t_5;
   __Pyx_RefNannySetupContext("value", 0);
 
-  /* "variable.pyx":31
- *         self.thisptr = Variable()
+  /* "variable.pyx":39
+ *         print(self.thisptr.id)
  *     def value(self, pyfloats):
  *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))             # <<<<<<<<<<<<<<
  *         print('get it')
  *         if cfloats is NULL:
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_pyfloats); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_pyfloats); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 39, __pyx_L1_error)
   __pyx_v_cfloats = ((float *)malloc((__pyx_t_1 * (sizeof(float)))));
 
-  /* "variable.pyx":32
+  /* "variable.pyx":40
  *     def value(self, pyfloats):
  *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
  *         print('get it')             # <<<<<<<<<<<<<<
  *         if cfloats is NULL:
  *             raise MemoryError()
  */
-  if (__Pyx_PrintOne(0, __pyx_kp_s_get_it) < 0) __PYX_ERR(0, 32, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_kp_s_get_it) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
 
-  /* "variable.pyx":33
+  /* "variable.pyx":41
  *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
  *         print('get it')
  *         if cfloats is NULL:             # <<<<<<<<<<<<<<
@@ -1354,16 +1402,16 @@ static PyObject *__pyx_pf_6pyCalc_3var_4value(struct __pyx_obj_6pyCalc_var *__py
   __pyx_t_2 = ((__pyx_v_cfloats == NULL) != 0);
   if (__pyx_t_2) {
 
-    /* "variable.pyx":34
+    /* "variable.pyx":42
  *         print('get it')
  *         if cfloats is NULL:
  *             raise MemoryError()             # <<<<<<<<<<<<<<
  *         for i in range(len(pyfloats)):
  *             cfloats[i] = pyfloats[i]
  */
-    PyErr_NoMemory(); __PYX_ERR(0, 34, __pyx_L1_error)
+    PyErr_NoMemory(); __PYX_ERR(0, 42, __pyx_L1_error)
 
-    /* "variable.pyx":33
+    /* "variable.pyx":41
  *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
  *         print('get it')
  *         if cfloats is NULL:             # <<<<<<<<<<<<<<
@@ -1372,46 +1420,46 @@ static PyObject *__pyx_pf_6pyCalc_3var_4value(struct __pyx_obj_6pyCalc_var *__py
  */
   }
 
-  /* "variable.pyx":35
+  /* "variable.pyx":43
  *         if cfloats is NULL:
  *             raise MemoryError()
  *         for i in range(len(pyfloats)):             # <<<<<<<<<<<<<<
  *             cfloats[i] = pyfloats[i]
  *         print(self.thisptr.getValue(cfloats))
  */
-  __pyx_t_1 = PyObject_Length(__pyx_v_pyfloats); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_v_pyfloats); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 43, __pyx_L1_error)
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_1; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "variable.pyx":36
+    /* "variable.pyx":44
  *             raise MemoryError()
  *         for i in range(len(pyfloats)):
  *             cfloats[i] = pyfloats[i]             # <<<<<<<<<<<<<<
  *         print(self.thisptr.getValue(cfloats))
  *     def type(self):
  */
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_pyfloats, __pyx_v_i, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_pyfloats, __pyx_v_i, Py_ssize_t, 1, PyInt_FromSsize_t, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_5 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_5 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     (__pyx_v_cfloats[__pyx_v_i]) = __pyx_t_5;
   }
 
-  /* "variable.pyx":37
+  /* "variable.pyx":45
  *         for i in range(len(pyfloats)):
  *             cfloats[i] = pyfloats[i]
  *         print(self.thisptr.getValue(cfloats))             # <<<<<<<<<<<<<<
  *     def type(self):
  *         if self.thisptr.type == constant:
  */
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->thisptr.getValue(__pyx_v_cfloats)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->thisptr.getValue(__pyx_v_cfloats)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 45, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_PrintOne(0, __pyx_t_4) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_t_4) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "variable.pyx":30
- *     def __cinit__(self):
- *         self.thisptr = Variable()
+  /* "variable.pyx":38
+ *         self.thisptr.setID(b);
+ *         print(self.thisptr.id)
  *     def value(self, pyfloats):             # <<<<<<<<<<<<<<
  *         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
  *         print('get it')
@@ -1430,7 +1478,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_4value(struct __pyx_obj_6pyCalc_var *__py
   return __pyx_r;
 }
 
-/* "variable.pyx":38
+/* "variable.pyx":46
  *             cfloats[i] = pyfloats[i]
  *         print(self.thisptr.getValue(cfloats))
  *     def type(self):             # <<<<<<<<<<<<<<
@@ -1458,7 +1506,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("type", 0);
 
-  /* "variable.pyx":39
+  /* "variable.pyx":47
  *         print(self.thisptr.getValue(cfloats))
  *     def type(self):
  *         if self.thisptr.type == constant:             # <<<<<<<<<<<<<<
@@ -1468,16 +1516,16 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
   __pyx_t_1 = ((__pyx_v_self->thisptr.type == calc::constant) != 0);
   if (__pyx_t_1) {
 
-    /* "variable.pyx":40
+    /* "variable.pyx":48
  *     def type(self):
  *         if self.thisptr.type == constant:
  *             print('constant')             # <<<<<<<<<<<<<<
  *         if self.thisptr.type == independent:
  *             print('independent')
  */
-    if (__Pyx_PrintOne(0, __pyx_n_s_constant) < 0) __PYX_ERR(0, 40, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_n_s_constant) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
 
-    /* "variable.pyx":39
+    /* "variable.pyx":47
  *         print(self.thisptr.getValue(cfloats))
  *     def type(self):
  *         if self.thisptr.type == constant:             # <<<<<<<<<<<<<<
@@ -1486,7 +1534,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
  */
   }
 
-  /* "variable.pyx":41
+  /* "variable.pyx":49
  *         if self.thisptr.type == constant:
  *             print('constant')
  *         if self.thisptr.type == independent:             # <<<<<<<<<<<<<<
@@ -1496,16 +1544,16 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
   __pyx_t_1 = ((__pyx_v_self->thisptr.type == calc::independent) != 0);
   if (__pyx_t_1) {
 
-    /* "variable.pyx":42
+    /* "variable.pyx":50
  *             print('constant')
  *         if self.thisptr.type == independent:
  *             print('independent')             # <<<<<<<<<<<<<<
  *         if self.thisptr.type == function:
  *             print('function')
  */
-    if (__Pyx_PrintOne(0, __pyx_n_s_independent) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_n_s_independent) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
 
-    /* "variable.pyx":41
+    /* "variable.pyx":49
  *         if self.thisptr.type == constant:
  *             print('constant')
  *         if self.thisptr.type == independent:             # <<<<<<<<<<<<<<
@@ -1514,7 +1562,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
  */
   }
 
-  /* "variable.pyx":43
+  /* "variable.pyx":51
  *         if self.thisptr.type == independent:
  *             print('independent')
  *         if self.thisptr.type == function:             # <<<<<<<<<<<<<<
@@ -1524,16 +1572,16 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
   __pyx_t_1 = ((__pyx_v_self->thisptr.type == calc::function) != 0);
   if (__pyx_t_1) {
 
-    /* "variable.pyx":44
+    /* "variable.pyx":52
  *             print('independent')
  *         if self.thisptr.type == function:
  *             print('function')             # <<<<<<<<<<<<<<
  *         print(self.thisptr.type)
  *     def c(self, float x):
  */
-    if (__Pyx_PrintOne(0, __pyx_n_s_function) < 0) __PYX_ERR(0, 44, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_n_s_function) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
 
-    /* "variable.pyx":43
+    /* "variable.pyx":51
  *         if self.thisptr.type == independent:
  *             print('independent')
  *         if self.thisptr.type == function:             # <<<<<<<<<<<<<<
@@ -1542,19 +1590,19 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
  */
   }
 
-  /* "variable.pyx":45
+  /* "variable.pyx":53
  *         if self.thisptr.type == function:
  *             print('function')
  *         print(self.thisptr.type)             # <<<<<<<<<<<<<<
  *     def c(self, float x):
  *         self.thisptr.c(x)
  */
-  __pyx_t_2 = __Pyx_PyInt_From_enum__calc_3a__3a_vType(__pyx_v_self->thisptr.type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_enum__calc_3a__3a_vType(__pyx_v_self->thisptr.type); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 45, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "variable.pyx":38
+  /* "variable.pyx":46
  *             cfloats[i] = pyfloats[i]
  *         print(self.thisptr.getValue(cfloats))
  *     def type(self):             # <<<<<<<<<<<<<<
@@ -1575,7 +1623,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6type(struct __pyx_obj_6pyCalc_var *__pyx
   return __pyx_r;
 }
 
-/* "variable.pyx":46
+/* "variable.pyx":54
  *             print('function')
  *         print(self.thisptr.type)
  *     def c(self, float x):             # <<<<<<<<<<<<<<
@@ -1591,7 +1639,7 @@ static PyObject *__pyx_pw_6pyCalc_3var_9c(PyObject *__pyx_v_self, PyObject *__py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("c (wrapper)", 0);
   assert(__pyx_arg_x); {
-    __pyx_v_x = __pyx_PyFloat_AsFloat(__pyx_arg_x); if (unlikely((__pyx_v_x == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L3_error)
+    __pyx_v_x = __pyx_PyFloat_AsFloat(__pyx_arg_x); if (unlikely((__pyx_v_x == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 54, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -1611,7 +1659,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_8c(struct __pyx_obj_6pyCalc_var *__pyx_v_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("c", 0);
 
-  /* "variable.pyx":47
+  /* "variable.pyx":55
  *         print(self.thisptr.type)
  *     def c(self, float x):
  *         self.thisptr.c(x)             # <<<<<<<<<<<<<<
@@ -1620,7 +1668,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_8c(struct __pyx_obj_6pyCalc_var *__pyx_v_
  */
   __pyx_v_self->thisptr.c(__pyx_v_x);
 
-  /* "variable.pyx":46
+  /* "variable.pyx":54
  *             print('function')
  *         print(self.thisptr.type)
  *     def c(self, float x):             # <<<<<<<<<<<<<<
@@ -1635,7 +1683,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_8c(struct __pyx_obj_6pyCalc_var *__pyx_v_
   return __pyx_r;
 }
 
-/* "variable.pyx":48
+/* "variable.pyx":56
  *     def c(self, float x):
  *         self.thisptr.c(x)
  *     def i(self):             # <<<<<<<<<<<<<<
@@ -1661,16 +1709,16 @@ static PyObject *__pyx_pf_6pyCalc_3var_10i(struct __pyx_obj_6pyCalc_var *__pyx_v
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("i", 0);
 
-  /* "variable.pyx":49
+  /* "variable.pyx":57
  *         self.thisptr.c(x)
  *     def i(self):
  *         self.thisptr.i()             # <<<<<<<<<<<<<<
  *     def f(self, var a, var b, op):
- *         print(op)
+ *         cdef char s
  */
   __pyx_v_self->thisptr.i();
 
-  /* "variable.pyx":48
+  /* "variable.pyx":56
  *     def c(self, float x):
  *         self.thisptr.c(x)
  *     def i(self):             # <<<<<<<<<<<<<<
@@ -1685,12 +1733,12 @@ static PyObject *__pyx_pf_6pyCalc_3var_10i(struct __pyx_obj_6pyCalc_var *__pyx_v
   return __pyx_r;
 }
 
-/* "variable.pyx":50
+/* "variable.pyx":58
  *     def i(self):
  *         self.thisptr.i()
  *     def f(self, var a, var b, op):             # <<<<<<<<<<<<<<
- *         print(op)
  *         cdef char s
+ *         s = ord(op[0])
  */
 
 /* Python wrapper */
@@ -1723,16 +1771,16 @@ static PyObject *__pyx_pw_6pyCalc_3var_13f(PyObject *__pyx_v_self, PyObject *__p
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_b)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("f", 1, 3, 3, 1); __PYX_ERR(0, 50, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("f", 1, 3, 3, 1); __PYX_ERR(0, 58, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_op)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("f", 1, 3, 3, 2); __PYX_ERR(0, 50, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("f", 1, 3, 3, 2); __PYX_ERR(0, 58, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "f") < 0)) __PYX_ERR(0, 50, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "f") < 0)) __PYX_ERR(0, 58, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1747,14 +1795,14 @@ static PyObject *__pyx_pw_6pyCalc_3var_13f(PyObject *__pyx_v_self, PyObject *__p
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("f", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 50, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("f", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 58, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pyCalc.var.f", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_6pyCalc_var, 1, "a", 0))) __PYX_ERR(0, 50, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_b), __pyx_ptype_6pyCalc_var, 1, "b", 0))) __PYX_ERR(0, 50, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_a), __pyx_ptype_6pyCalc_var, 1, "a", 0))) __PYX_ERR(0, 58, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_b), __pyx_ptype_6pyCalc_var, 1, "b", 0))) __PYX_ERR(0, 58, __pyx_L1_error)
   __pyx_r = __pyx_pf_6pyCalc_3var_12f(((struct __pyx_obj_6pyCalc_var *)__pyx_v_self), __pyx_v_a, __pyx_v_b, __pyx_v_op);
 
   /* function exit code */
@@ -1776,60 +1824,54 @@ static PyObject *__pyx_pf_6pyCalc_3var_12f(struct __pyx_obj_6pyCalc_var *__pyx_v
   long __pyx_t_2;
   __Pyx_RefNannySetupContext("f", 0);
 
-  /* "variable.pyx":51
- *         self.thisptr.i()
+  /* "variable.pyx":60
  *     def f(self, var a, var b, op):
- *         print(op)             # <<<<<<<<<<<<<<
- *         cdef char s
- *         s = ord(op[0])
- */
-  if (__Pyx_PrintOne(0, __pyx_v_op) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
-
-  /* "variable.pyx":53
- *         print(op)
  *         cdef char s
  *         s = ord(op[0])             # <<<<<<<<<<<<<<
  *         cdef Variable *l = &a.thisptr
  *         cdef Variable *r = &b.thisptr
  */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_op, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_op, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_Ord(__pyx_t_1); if (unlikely(__pyx_t_2 == (long)(Py_UCS4)-1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Ord(__pyx_t_1); if (unlikely(__pyx_t_2 == (long)(Py_UCS4)-1)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_s = __pyx_t_2;
 
-  /* "variable.pyx":54
+  /* "variable.pyx":61
  *         cdef char s
  *         s = ord(op[0])
  *         cdef Variable *l = &a.thisptr             # <<<<<<<<<<<<<<
  *         cdef Variable *r = &b.thisptr
- *         self.thisptr.f(l, r, &s)
+ *         print(self.thisptr.f(l, r, &s))
  */
   __pyx_v_l = (&__pyx_v_a->thisptr);
 
-  /* "variable.pyx":55
+  /* "variable.pyx":62
  *         s = ord(op[0])
  *         cdef Variable *l = &a.thisptr
  *         cdef Variable *r = &b.thisptr             # <<<<<<<<<<<<<<
- *         self.thisptr.f(l, r, &s)
+ *         print(self.thisptr.f(l, r, &s))
  * 
  */
   __pyx_v_r = (&__pyx_v_b->thisptr);
 
-  /* "variable.pyx":56
+  /* "variable.pyx":63
  *         cdef Variable *l = &a.thisptr
  *         cdef Variable *r = &b.thisptr
- *         self.thisptr.f(l, r, &s)             # <<<<<<<<<<<<<<
+ *         print(self.thisptr.f(l, r, &s))             # <<<<<<<<<<<<<<
  * 
  */
-  __pyx_v_self->thisptr.f(__pyx_v_l, __pyx_v_r, (&__pyx_v_s));
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->thisptr.f(__pyx_v_l, __pyx_v_r, (&__pyx_v_s))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 63, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "variable.pyx":50
+  /* "variable.pyx":58
  *     def i(self):
  *         self.thisptr.i()
  *     def f(self, var a, var b, op):             # <<<<<<<<<<<<<<
- *         print(op)
  *         cdef char s
+ *         s = ord(op[0])
  */
 
   /* function exit code */
@@ -3035,8 +3077,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 34, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 43, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 33, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -3193,9 +3235,9 @@ PyMODINIT_FUNC PyInit_pyCalc(void)
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_6pyCalc_var) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_6pyCalc_var) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_type_6pyCalc_var.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "var", (PyObject *)&__pyx_type_6pyCalc_var) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "var", (PyObject *)&__pyx_type_6pyCalc_var) < 0) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_ptype_6pyCalc_var = &__pyx_type_6pyCalc_var;
   __Pyx_EnumMeta.tp_base = (&PyType_Type);
   if (PyType_Ready(&__Pyx_EnumMeta) < 0) __PYX_ERR(1, 15, __pyx_L1_error)
@@ -3208,6 +3250,15 @@ PyMODINIT_FUNC PyInit_pyCalc(void)
   #if defined(__Pyx_Generator_USED) || defined(__Pyx_Coroutine_USED)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
+
+  /* "variable.pyx":21
+ *         float f(Variable *a, Variable *b, char *op);
+ * 
+ * cdef int b = 0             # <<<<<<<<<<<<<<
+ * 
+ * cdef class var:
+ */
+  __pyx_v_6pyCalc_b = 0;
 
   /* "variable.pyx":1
  * # distutils: language = c++             # <<<<<<<<<<<<<<
@@ -5802,6 +5853,37 @@ bad:
         int one = 1; int little = (int)*(unsigned char *)&one;
         unsigned char *bytes = (unsigned char *)&value;
         return _PyLong_FromByteArray(bytes, sizeof(char),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
+            static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+    const int neg_one = (int) -1, const_zero = (int) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(int) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(int) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(int) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(int),
                                      little, !is_unsigned);
     }
 }

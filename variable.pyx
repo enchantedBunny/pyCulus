@@ -1,20 +1,24 @@
 # distutils: language = c++
 # distutils: sources = Variable.cpp
 from libc.stdlib cimport malloc, free
+from libcpp.string cimport string
 cimport cython
 cdef extern from "Variable.h" namespace "calc":
     cpdef enum vType:
             independent, constant, function
     cdef cppclass Variable:
+        int id;
         char op;
         float value;
         vType type;
         Variable();
+        void setID(int bId);
         float getValue(float *v);
         void c(float value);
         void i();
-        void f(Variable *a, Variable *b, char *op);
+        float f(Variable *a, Variable *b, char *op);
     
+cdef int b = 0
 
 cdef class var:
     cdef:
@@ -26,7 +30,11 @@ cdef class var:
     def op(self):
         return self.thisptr.op
     def __cinit__(self):
+        global b
+        b +=1
         self.thisptr = Variable()
+        self.thisptr.setID(b);
+        print(self.thisptr.id)
     def value(self, pyfloats):
         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
         print('get it')
@@ -52,5 +60,5 @@ cdef class var:
         s = ord(op[0])
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
-        self.thisptr.f(l, r, &s)
+        print(self.thisptr.f(l, r, &s))
 
