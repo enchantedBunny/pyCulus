@@ -14,7 +14,7 @@ cdef extern from "Variable.h" namespace "calc":
         void c(float value);
         void i();
         void f(Variable *a, Variable *b, char *op);
-
+    
 
 cdef class var:
     cdef:
