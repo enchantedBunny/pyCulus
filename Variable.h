@@ -10,6 +10,8 @@ namespace calc {
 			char op;
 			vType type;
 			float value;
+			int depIds[64];
+			int deps(Variable *v);
 			Variable();
 			void setID(int bId);
 			void i();
