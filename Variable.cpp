@@ -1,9 +1,8 @@
 #include "Variable.h"
-#include <stdio.h>
-#include <stdexcept>
 using namespace calc;
 Variable::Variable()
 {
+	
 }
 void Variable::setID(int bId)
 {
@@ -18,6 +17,13 @@ void Variable::c(float v)
 	type = constant;	
 	value = v;
 }
+std::string Variable::build(){
+	if (type == constant)return std::to_string(value);
+	if (type == independent)return "v" + std::to_string(id);
+	std::string expecting = "";
+	return "(" + left->build() + op + right->build() + ")";
+
+}
 int Variable::deps(Variable *v){
 	int out = 0;
 	if (v->type == independent){	
@@ -31,7 +37,7 @@ int Variable::deps(Variable *v){
         		return 1;
     		}
 		}
-		throw std::invalid_argument( "received negative value" );
+		throw std::invalid_argument( "received value" );
 		return 0;
 	}
 	else if (v->type == function){

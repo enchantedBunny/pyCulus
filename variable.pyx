@@ -11,6 +11,7 @@ cdef extern from "Variable.h" namespace "calc":
         char op;
         float value;
         vType type;
+        string build();
         Variable();
         void setID(int bId);
         float getValue(float *v);
@@ -29,6 +30,8 @@ cdef class var:
         var r
     def op(self):
         return self.thisptr.op
+    def build(self):
+        print(self.thisptr.build().decode('utf8'))
     def __cinit__(self):
         global b
         b +=1
