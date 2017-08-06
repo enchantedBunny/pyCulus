@@ -2,6 +2,7 @@
 # distutils: sources = Variable.cpp
 from libc.stdlib cimport malloc, free
 from libcpp.string cimport string
+from itertools import zip_longest
 cimport cython
 cdef extern from "Variable.h" namespace "calc":
     cpdef enum vType:
@@ -12,15 +13,19 @@ cdef extern from "Variable.h" namespace "calc":
         float value;
         vType type;
         string build();
+        string preview();
         Variable();
         void setID(int bId);
         float getValue(float *v);
         void c(float value);
         void i();
-        float f(Variable *a, Variable *b, char *op);
-    
+        string f(Variable *a, Variable *b, char *op);
 cdef int b = 0
-
+cdef public void cPrint(string s):
+    print(s.decode('utf8'))
+def reduce_mean(pyfloats):
+    return sum(pyfloats[0:len(pyfloats)])/len(pyfloats)
+    
 cdef class var:
     cdef:
         float * cfloats
@@ -30,8 +35,8 @@ cdef class var:
         var r
     def op(self):
         return self.thisptr.op
-    def build(self):
-        print(self.thisptr.build().decode('utf8'))
+    def preview(self):
+        print(self.thisptr.preview().decode('utf8'))
     def __cinit__(self):
         global b
         b +=1
@@ -40,12 +45,21 @@ cdef class var:
         print(self.thisptr.id)
     def value(self, pyfloats):
         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
-        print('get it')
         if cfloats is NULL:
             raise MemoryError()
         for i in range(len(pyfloats)):
             cfloats[i] = pyfloats[i]
-        print(self.thisptr.getValue(cfloats))
+        return(self.thisptr.getValue(cfloats))
+    def feed(self, floats):
+        out = []
+        for f in floats:
+            cfloats = <float *> malloc(len(f)*cython.sizeof(float))
+            if cfloats is NULL:
+                raise MemoryError()
+            for i in range(len(f)):
+                cfloats[i] = f[i]
+            out.append(self.thisptr.getValue(cfloats))
+        return(out)
     def type(self):
         if self.thisptr.type == constant:
             print('constant')
@@ -63,5 +77,5 @@ cdef class var:
         s = ord(op[0])
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
-        print(self.thisptr.f(l, r, &s))
+        print(self.thisptr.f(l, r, &s).decode('utf8'))
 
