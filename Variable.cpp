@@ -23,12 +23,14 @@ void Variable::c(float v)
 std::string Variable::preview(){
 	if (type == constant)return "c";
 	if (type == independent)return "v" + std::to_string(id);
-	return "( " + tree[0]  + " " + op + " " + tree[1] + " )";
+	if (type ==  function)return "( " + tree[0]  + " " + op + " " + tree[1] + " )";
+	return "sum( " + tree[0] + " )";
 }
 std::string Variable::build(){
 	if (type == constant)return std::to_string(value);
 	if (type == independent)return "v" + std::to_string(id);
-	return "( " + left->build() + " " + op + " " + right->build() + " )";
+	if (type ==  function)return "( " + left->build() + " " + op + " " + right->build() + " )";
+	return "sum( " + left->build() + " )";
 }
 void Variable::buildTree(){
 	tree[0] = left->build();
@@ -48,7 +50,7 @@ unsigned short getFirst(std::string &s){
 	}
 	return atoi(out.c_str());
 }
-std::string Variable::f(Variable *a, Variable *b, char *o)
+std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
 {
 	type = function;
 	left = a;
@@ -88,18 +90,50 @@ std::string Variable::f(Variable *a, Variable *b, char *o)
 		 out += std::to_string(allOrderedDeps[i]) + " ";
 	}
 	countOrderedDeps = n;
+	if (getDerivs){
+		for (int i = 0; i < n; i++){
+			if (allOrderedDeps[i] == left->id){
+				if (op == '*')derivs[i]=b;
+				Variable* blob = new Variable;
+				blob->c(1);
+				if (op == '+')derivs[i]= blob;
+				cPrint(std::to_string(derivs[i]->id));
+			}
+			if (allOrderedDeps[i] == right->id){
+				if (op == '*')derivs[i]=a;
+				Variable* blob = new Variable;
+				blob->c(1);
+				if (op == '+')derivs[i]= blob;
+				cPrint(std::to_string(derivs[i]->id));
+			}	
+			
 
+		}
+		
+	}
 	return out;
 
+}
+void Variable::m(Variable *a)
+{
+	type = matrix;
+	left = a;
+	tree[0] = left->build();
 }
 
 Variable::~Variable()
 {
 }
-
+float Variable::getValue(float **v, int rows){
+	float* vals = left->feed(v, rows);
+	float out=0;
+	for (int i = 0; i<rows;i++){
+		out += vals[i];
+	}
+	return out/rows;
+}
 float Variable::getValue(float *v)
 {
-   //auto start = std::chrono::high_resolution_clock::now();
    	if (type == constant)return value;
 	if (type == independent)return v[0];
 	float lout [deps[0]];
@@ -113,13 +147,25 @@ float Variable::getValue(float *v)
 		if (depsList[1][x] == allOrderedDeps[i]){
 			rout[x] = v[i];
 		}
-
 	}
-	//auto finish = std::chrono::high_resolution_clock::now();
-	//cPrint(std::to_string(std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count()));
 	if (op == '+')return  left->getValue(lout) + right->getValue(rout);
 	if (op == '-')return  left->getValue(lout) - right->getValue(rout);
 	if (op == '*')return  left->getValue(lout) * right->getValue(rout);
 	if (op == '/')return  left->getValue(lout) / right->getValue(rout);
 	return op;
+}
+float* Variable::feed(float **v, int rows){
+	cPrint("feeding " + std::to_string(rows));
+	float out[rows]; 
+	for (int i = 0; i< rows;i++){
+		out[i] = getValue(v[i]);
+	}
+	fValues = out;
+	return fValues;
+}
+float Variable::getDerivValue(float *v){
+
+	cPrint(std::to_string(v[0]));
+	cPrint(std::to_string(derivs[0]->id));
+	return derivs[0]->getValue(v);
 }

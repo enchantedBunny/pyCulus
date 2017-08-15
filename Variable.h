@@ -6,7 +6,8 @@
 #include <chrono>
 #include <algorithm>
 namespace calc {
-	enum vType {independent, constant, function};
+	enum vType {independent, constant, function, matrix};
+	class Deriv;
 	class Variable {
 		public:
 			int id;
@@ -26,9 +27,21 @@ namespace calc {
 			Variable();
 			void setID(int bId);
 			void i();
+			void m(Variable *a);
 			void c(float value);
-			std::string f(Variable *a, Variable *b, char *op);
+			std::string f(Variable *a, Variable *b, char *op, bool getDerivs = true);
 			~Variable();
 			float getValue(float *v);
+			float getValue(float **v, int rows);
+			float* feed(float **v, int rows);
+			float* fValues;
+			Variable* derivs[100];
+			float getDerivValue(float *v);
+	};
+	class Deriv {
+		public:
+			char op;
+			Variable *left;
+			Variable *right;
 	};
 } 

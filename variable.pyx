@@ -6,7 +6,7 @@ from itertools import zip_longest
 cimport cython
 cdef extern from "Variable.h" namespace "calc":
     cpdef enum vType:
-            independent, constant, function
+            independent, constant, function, matrix
     cdef cppclass Variable:
         int id;
         char op;
@@ -17,18 +17,24 @@ cdef extern from "Variable.h" namespace "calc":
         Variable();
         void setID(int bId);
         float getValue(float *v);
+        float getValue(float **v, int rows)
+        float* feed(float **v, int rows)
         void c(float value);
+        void m(Variable *a);
         void i();
         string f(Variable *a, Variable *b, char *op);
+        float* fValues;
+        float getDerivValue(float *v);
 cdef int b = 0
 cdef public void cPrint(string s):
     print(s.decode('utf8'))
 def reduce_mean(pyfloats):
     return sum(pyfloats[0:len(pyfloats)])/len(pyfloats)
-    
+
 cdef class var:
     cdef:
         float * cfloats
+        float ** cfloatses
         int i
         Variable thisptr      # hold a C++ instance which we're wrapping
         var l
@@ -44,22 +50,36 @@ cdef class var:
         self.thisptr.setID(b);
         print(self.thisptr.id)
     def value(self, pyfloats):
+        if self.thisptr.type == matrix:
+            cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
+            for grop in range(len(pyfloats)):
+                cfloats = <float *> malloc(len(pyfloats[grop])*cython.sizeof(float))
+                if cfloats is NULL:
+                    raise MemoryError()
+                for i in range(len(pyfloats[grop])):
+                    cfloats[i] = pyfloats[grop][i]
+                cfloatses[grop] = cfloats
+            return self.thisptr.getValue(cfloatses,len(pyfloats))
         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
         if cfloats is NULL:
             raise MemoryError()
         for i in range(len(pyfloats)):
             cfloats[i] = pyfloats[i]
         return(self.thisptr.getValue(cfloats))
-    def feed(self, floats):
-        out = []
-        for f in floats:
-            cfloats = <float *> malloc(len(f)*cython.sizeof(float))
+    def feed(self, floatses):
+        cfloatses = <float **> malloc(len(floatses)*cython.sizeof(float))
+        for gr in range(len(floatses)):
+            cfloats = <float *> malloc(len(floatses[gr])*cython.sizeof(float))
             if cfloats is NULL:
                 raise MemoryError()
-            for i in range(len(f)):
-                cfloats[i] = f[i]
-            out.append(self.thisptr.getValue(cfloats))
-        return(out)
+            for i in range(len(floatses[gr])):
+                cfloats[i] = floatses[gr][i]
+            cfloatses[gr] = cfloats
+        cdef float* glob = self.thisptr.feed(cfloatses, len(floatses))
+        out = []
+        for i in range(len(floatses)):
+            out.append(glob[i])
+        return out
     def type(self):
         if self.thisptr.type == constant:
             print('constant')
@@ -67,6 +87,8 @@ cdef class var:
             print('independent')
         if self.thisptr.type == function:
             print('function')
+        if self.thisptr.type == matrix:
+            print('matrix')
         print(self.thisptr.type)
     def c(self, float x):
         self.thisptr.c(x)
@@ -78,4 +100,14 @@ cdef class var:
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
         print(self.thisptr.f(l, r, &s).decode('utf8'))
+    def m(self, var a):
+        cdef Variable *l = &a.thisptr
+        self.thisptr.m(l)
+    def  getDeriv(self,pyfloats):
+        cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
+        if cfloats is NULL:
+            raise MemoryError()
+        for i in range(len(pyfloats)):
+            cfloats[i] = pyfloats[i]
+        return(self.thisptr.getDerivValue(cfloats))
 
