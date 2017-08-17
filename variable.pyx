@@ -24,7 +24,7 @@ cdef extern from "Variable.h" namespace "calc":
         void i();
         string f(Variable *a, Variable *b, char *op);
         float* fValues;
-        float getDerivValue(float *v);
+        float getDerivValue(int g,float *v);
 cdef int b = 0
 cdef public void cPrint(string s):
     print(s.decode('utf8'))
@@ -99,15 +99,15 @@ cdef class var:
         s = ord(op[0])
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
-        print(self.thisptr.f(l, r, &s).decode('utf8'))
+        return self.thisptr.f(l, r, &s).decode('utf8')
     def m(self, var a):
         cdef Variable *l = &a.thisptr
         self.thisptr.m(l)
-    def  getDeriv(self,pyfloats):
+    def  getDeriv(self,g,pyfloats):
         cfloats = <float *> malloc(len(pyfloats)*cython.sizeof(float))
         if cfloats is NULL:
             raise MemoryError()
         for i in range(len(pyfloats)):
             cfloats[i] = pyfloats[i]
-        return(self.thisptr.getDerivValue(cfloats))
+        return(self.thisptr.getDerivValue(g,cfloats))
 

@@ -36,7 +36,7 @@ namespace calc {
 			float* feed(float **v, int rows);
 			float* fValues;
 			Variable* derivs[100];
-			float getDerivValue(float *v);
+			float getDerivValue(int g,float *v);
 	};
 	class Deriv {
 		public:

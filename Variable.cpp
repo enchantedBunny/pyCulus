@@ -59,8 +59,6 @@ std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
 	buildTree();
 	for (int i = 0;i<2; i++){
 		deps[i] = (unsigned short)std::count(tree[i].begin(), tree[i].end(), 'v');
-		
-		
 	}
 	int i2 = 0;
 	while (tree[0].find('v') != std::string::npos){depsList[0][i2] = getFirst(tree[0]);i2++;}
@@ -85,31 +83,57 @@ std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
         }
     std::sort(allDepsWithDuplicates, allDepsWithDuplicates+n);
 	std::string out = "";
-    for(i=0;i<n;i++){
-         allOrderedDeps[i] = allDepsWithDuplicates[i];
-		 out += std::to_string(allOrderedDeps[i]) + " ";
+	
+	i = 0;
+	int ri = 0;
+	for(j=0;j<n;j++){
+         allOrderedDeps[j] = allDepsWithDuplicates[j];
+		 out += std::to_string(allOrderedDeps[j]) + " ";
 	}
 	countOrderedDeps = n;
 	if (getDerivs){
-		for (int i = 0; i < n; i++){
-			if (allOrderedDeps[i] == left->id){
-				if (op == '*')derivs[i]=b;
-				Variable* blob = new Variable;
-				blob->c(1);
-				if (op == '+')derivs[i]= blob;
-				cPrint(std::to_string(derivs[i]->id));
-			}
-			if (allOrderedDeps[i] == right->id){
-				if (op == '*')derivs[i]=a;
-				Variable* blob = new Variable;
-				blob->c(1);
-				if (op == '+')derivs[i]= blob;
-				cPrint(std::to_string(derivs[i]->id));
-			}	
-			
-
-		}
 		
+		while (i < n){
+			if (allOrderedDeps[i] == left->id)break;
+			i++;
+		}
+		while (ri < n){
+			if (allOrderedDeps[ri] == right->id)break;
+			ri++;
+		}
+		if (op == '*')
+		{	
+			derivs[i]=b;
+			derivs[ri]=a;
+		}
+		Variable* blob = new Variable;
+		Variable* gblob = new Variable;
+		blob->c(1);
+		gblob->c(-1);
+		if (op == '+'){
+			derivs[i]= blob;
+			derivs[ri]= blob;
+		}
+		if (op == '-'){
+			derivs[i]= blob;
+			derivs[ri]= gblob;
+		}
+		if (op == '/'){
+			Variable* flob = new Variable;
+			char* gop = new char;
+			*gop = '/';
+			flob->f(blob,b, gop, false);	
+			derivs[i]= flob;
+			Variable* fglob = new Variable;
+			char* hop = new char;
+			*hop = '*';
+			fglob->f(gblob,a, hop);	 //-a
+			Variable* klob = new Variable;
+			klob->f(b,b, hop);     //b*b
+			Variable* tlob = new Variable;
+			tlob->f(fglob,klob, gop, false); //-a/b^2
+			derivs[ri]= tlob;
+		}
 	}
 	return out;
 
@@ -134,6 +158,11 @@ float Variable::getValue(float **v, int rows){
 }
 float Variable::getValue(float *v)
 {
+	std::string myType;
+	if (type == constant)myType="const";
+	if (type == independent)myType="indep";
+	if (type == function)myType="func";
+	cPrint("I am a " + myType + " and my v[0] is " + std::to_string(v[0]));
    	if (type == constant)return value;
 	if (type == independent)return v[0];
 	float lout [deps[0]];
@@ -163,9 +192,8 @@ float* Variable::feed(float **v, int rows){
 	fValues = out;
 	return fValues;
 }
-float Variable::getDerivValue(float *v){
-
+float Variable::getDerivValue(int g,float *v){
+	//cPrint(std::to_string(derivs[g]->right->id));
 	cPrint(std::to_string(v[0]));
-	cPrint(std::to_string(derivs[0]->id));
-	return derivs[0]->getValue(v);
+	return derivs[g]->getValue(v);
 }
