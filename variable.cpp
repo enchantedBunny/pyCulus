@@ -1158,6 +1158,7 @@ static const char __pyx_k_parents[] = "parents";
 static const char __pyx_k_prepare[] = "__prepare__";
 static const char __pyx_k_EnumBase[] = "EnumBase";
 static const char __pyx_k_EnumType[] = "EnumType";
+static const char __pyx_k_My_id_is[] = "My id is ";
 static const char __pyx_k_constant[] = "constant";
 static const char __pyx_k_function[] = "function";
 static const char __pyx_k_pyfloats[] = "pyfloats";
@@ -1182,6 +1183,7 @@ static PyObject *__pyx_n_s_EnumBase;
 static PyObject *__pyx_n_s_EnumType;
 static PyObject *__pyx_n_s_IntEnum;
 static PyObject *__pyx_n_s_MemoryError;
+static PyObject *__pyx_kp_s_My_id_is;
 static PyObject *__pyx_n_s_OrderedDict;
 static PyObject *__pyx_n_s_Pyx_EnumBase;
 static PyObject *__pyx_n_s_Pyx_EnumBase___new;
@@ -1540,6 +1542,7 @@ static int __pyx_pf_6pyCalc_3var_4__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
   /* "variable.pyx":48
@@ -1556,7 +1559,7 @@ static int __pyx_pf_6pyCalc_3var_4__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_
  *         b +=1
  *         self.thisptr = Variable()             # <<<<<<<<<<<<<<
  *         self.thisptr.setID(b);
- *         print(self.thisptr.id)
+ *         print('My id is ',self.thisptr.id)
  */
   __pyx_v_self->thisptr = calc::Variable();
 
@@ -1564,7 +1567,7 @@ static int __pyx_pf_6pyCalc_3var_4__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_
  *         b +=1
  *         self.thisptr = Variable()
  *         self.thisptr.setID(b);             # <<<<<<<<<<<<<<
- *         print(self.thisptr.id)
+ *         print('My id is ',self.thisptr.id)
  *     def value(self, pyfloats):
  */
   __pyx_v_self->thisptr.setID(__pyx_v_6pyCalc_b);
@@ -1572,14 +1575,22 @@ static int __pyx_pf_6pyCalc_3var_4__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_
   /* "variable.pyx":51
  *         self.thisptr = Variable()
  *         self.thisptr.setID(b);
- *         print(self.thisptr.id)             # <<<<<<<<<<<<<<
+ *         print('My id is ',self.thisptr.id)             # <<<<<<<<<<<<<<
  *     def value(self, pyfloats):
  *         if self.thisptr.type == matrix:
  */
   __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->thisptr.id); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_kp_s_My_id_is);
+  __Pyx_GIVEREF(__pyx_kp_s_My_id_is);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_kp_s_My_id_is);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_1);
+  __pyx_t_1 = 0;
+  if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "variable.pyx":46
  *     def preview(self):
@@ -1594,6 +1605,7 @@ static int __pyx_pf_6pyCalc_3var_4__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_AddTraceback("pyCalc.var.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
@@ -1603,7 +1615,7 @@ static int __pyx_pf_6pyCalc_3var_4__cinit__(struct __pyx_obj_6pyCalc_var *__pyx_
 
 /* "variable.pyx":52
  *         self.thisptr.setID(b);
- *         print(self.thisptr.id)
+ *         print('My id is ',self.thisptr.id)
  *     def value(self, pyfloats):             # <<<<<<<<<<<<<<
  *         if self.thisptr.type == matrix:
  *             cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
@@ -1640,7 +1652,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6value(struct __pyx_obj_6pyCalc_var *__py
   __Pyx_RefNannySetupContext("value", 0);
 
   /* "variable.pyx":53
- *         print(self.thisptr.id)
+ *         print('My id is ',self.thisptr.id)
  *     def value(self, pyfloats):
  *         if self.thisptr.type == matrix:             # <<<<<<<<<<<<<<
  *             cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
@@ -1768,7 +1780,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6value(struct __pyx_obj_6pyCalc_var *__py
     goto __pyx_L0;
 
     /* "variable.pyx":53
- *         print(self.thisptr.id)
+ *         print('My id is ',self.thisptr.id)
  *     def value(self, pyfloats):
  *         if self.thisptr.type == matrix:             # <<<<<<<<<<<<<<
  *             cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
@@ -1855,7 +1867,7 @@ static PyObject *__pyx_pf_6pyCalc_3var_6value(struct __pyx_obj_6pyCalc_var *__py
 
   /* "variable.pyx":52
  *         self.thisptr.setID(b);
- *         print(self.thisptr.id)
+ *         print('My id is ',self.thisptr.id)
  *     def value(self, pyfloats):             # <<<<<<<<<<<<<<
  *         if self.thisptr.type == matrix:
  *             cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
@@ -4151,6 +4163,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_EnumType, __pyx_k_EnumType, sizeof(__pyx_k_EnumType), 0, 0, 1, 1},
   {&__pyx_n_s_IntEnum, __pyx_k_IntEnum, sizeof(__pyx_k_IntEnum), 0, 0, 1, 1},
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
+  {&__pyx_kp_s_My_id_is, __pyx_k_My_id_is, sizeof(__pyx_k_My_id_is), 0, 0, 1, 0},
   {&__pyx_n_s_OrderedDict, __pyx_k_OrderedDict, sizeof(__pyx_k_OrderedDict), 0, 0, 1, 1},
   {&__pyx_n_s_Pyx_EnumBase, __pyx_k_Pyx_EnumBase, sizeof(__pyx_k_Pyx_EnumBase), 0, 0, 1, 1},
   {&__pyx_n_s_Pyx_EnumBase___new, __pyx_k_Pyx_EnumBase___new, sizeof(__pyx_k_Pyx_EnumBase___new), 0, 0, 1, 1},

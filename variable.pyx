@@ -6,7 +6,7 @@ from itertools import zip_longest
 cimport cython
 cdef extern from "Variable.h" namespace "calc":
     cpdef enum vType:
-            independent, constant, function, matrix
+            independent, constant, function, matrix, special
     cdef cppclass Variable:
         int id;
         char op;
@@ -48,7 +48,7 @@ cdef class var:
         b +=1
         self.thisptr = Variable()
         self.thisptr.setID(b);
-        print(self.thisptr.id)
+        print('My id is ',self.thisptr.id)
     def value(self, pyfloats):
         if self.thisptr.type == matrix:
             cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
@@ -89,6 +89,8 @@ cdef class var:
             print('function')
         if self.thisptr.type == matrix:
             print('matrix')
+        if self.thisptr.type == special:
+            print('special')
         print(self.thisptr.type)
     def c(self, float x):
         self.thisptr.c(x)

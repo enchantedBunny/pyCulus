@@ -6,7 +6,7 @@
 #include <chrono>
 #include <algorithm>
 namespace calc {
-	enum vType {independent, constant, function, matrix};
+	enum vType {independent, constant, function, matrix, special};
 	class Deriv;
 	class Variable {
 		public:
@@ -36,6 +36,7 @@ namespace calc {
 			float* feed(float **v, int rows);
 			float* fValues;
 			Variable* derivs[100];
+			Variable* directDerivs[2];
 			float getDerivValue(int g,float *v);
 	};
 	class Deriv {
