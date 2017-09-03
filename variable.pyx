@@ -3,6 +3,7 @@
 from libc.stdlib cimport malloc, free
 from libcpp.string cimport string
 from itertools import zip_longest
+import math
 cimport cython
 cdef extern from "Variable.h" namespace "calc":
     cpdef enum vType:
@@ -23,11 +24,33 @@ cdef extern from "Variable.h" namespace "calc":
         void m(Variable *a);
         void i();
         string f(Variable *a, Variable *b, char *op);
+        string f(Variable *a, char* op);
         float* fValues;
         float getDerivValue(int g,float *v);
 cdef int b = 0
 cdef public void cPrint(string s):
-    print(s.decode('utf8'))
+    #logger.info(s)
+    return 
+    # print(s.decode('utf8'))
+
+import logging
+import logging.handlers
+
+logger = logging.getLogger('cython main Logger')
+logger.setLevel(logging.INFO)
+
+#add handler to the logger
+handler = logging.handlers.SysLogHandler('/dev/log')
+
+#add syslog format to the handler
+formatter = logging.Formatter('Python: { "loggerName":"%(name)s", "asciTime":"%(asctime)s", "pathName":"%(pathname)s", "logRecordCreationTime":"%(created)f", "functionName":"%(funcName)s", "levelNo":"%(levelno)s", "lineNo":"%(lineno)d", "time":"%(msecs)d", "levelName":"%(levelname)s", "message":"%(message)s"}')
+
+handler.formatter = formatter
+logger.addHandler(handler)
+
+logger.info("PGCG initialised")
+
+
 def reduce_mean(pyfloats):
     return sum(pyfloats[0:len(pyfloats)])/len(pyfloats)
 
@@ -102,6 +125,12 @@ cdef class var:
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
         return self.thisptr.f(l, r, &s).decode('utf8')
+    def exp(self, var a):
+        op = "e"
+        cdef char s
+        s = ord(op[0])
+        cdef Variable *l = &a.thisptr
+        return self.thisptr.f(l, &s).decode('utf8')
     def m(self, var a):
         cdef Variable *l = &a.thisptr
         self.thisptr.m(l)
@@ -111,5 +140,19 @@ cdef class var:
             raise MemoryError()
         for i in range(len(pyfloats)):
             cfloats[i] = pyfloats[i]
-        return(self.thisptr.getDerivValue(g,cfloats))
+        out  = self.thisptr.getDerivValue(g,cfloats)
+        if math.isnan(out):
+            logger.info("error - nan" + g + pyfloats)
+            return -42
+        return out
+    def feedDeriv(self,g, floatses):
+        out = []
+        for f in range(len(floatses[0])):
+            ror = [gr[f]  for gr in floatses]
+            print(ror)
+            out.append(self.getDeriv(g,ror))
+        return out
+            
+            
+        
 

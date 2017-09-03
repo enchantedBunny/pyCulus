@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <chrono>
 #include <algorithm>
+#include <math.h>
 namespace calc {
 	enum vType {independent, constant, function, matrix, special};
 	class Deriv;
@@ -30,6 +31,7 @@ namespace calc {
 			void m(Variable *a);
 			void c(float value);
 			std::string f(Variable *a, Variable *b, char *op, bool getDerivs = true);
+			std::string f(Variable *a, char *op, bool getDerivs = true);
 			~Variable();
 			float getValue(float *v);
 			float getValue(float **v, int rows);
