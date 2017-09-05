@@ -10,7 +10,7 @@ cdef extern from "Variable.h" namespace "calc":
             independent, constant, function, matrix, special
     cdef cppclass Variable:
         int id;
-        char op;
+        string op;
         float value;
         vType type;
         string build();
@@ -23,8 +23,9 @@ cdef extern from "Variable.h" namespace "calc":
         void c(float value);
         void m(Variable *a);
         void i();
-        string f(Variable *a, Variable *b, char *op);
-        string f(Variable *a, char* op);
+        string f(Variable *a, Variable *b, string *op);
+        string f(Variable *a, string* op);
+        string f(Variable *a, string *o, int p)
         float* fValues;
         float getDerivValue(int g,float *v);
 cdef int b = 0
@@ -60,14 +61,13 @@ def reduce_mean(pyfloats):
 
 cdef class var:
     cdef:
+        int cint
         float * cfloats
         float ** cfloatses
         int i
         Variable thisptr      # hold a C++ instance which we're wrapping
         var l
         var r
-    def op(self):
-        return self.thisptr.op
     def preview(self):
         print(self.thisptr.preview().decode('utf8'))
     def __cinit__(self):
@@ -123,18 +123,24 @@ cdef class var:
         self.thisptr.c(x)
     def i(self):
         self.thisptr.i()
-    def f(self, var a, var b, op):
-        cdef char s
-        s = ord(op[0])
+    def f(self, var a, var b, inop):
+        cdef string s
+        s = str.encode(inop)
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
         return self.thisptr.f(l, r, &s).decode('utf8')
     def exp(self, var a):
-        op = "e"
-        cdef char s
-        s = ord(op[0])
+        inop = "exp"
+        cdef string s
+        s = str.encode(inop)
         cdef Variable *l = &a.thisptr
         return self.thisptr.f(l, &s).decode('utf8')
+    def pow(self, var a, int g):
+        inop = "pow"
+        cdef string s
+        s = str.encode(inop)
+        cdef Variable *l = &a.thisptr
+        return self.thisptr.f(l, &s, g).decode('utf8')
     def m(self, var a):
         cdef Variable *l = &a.thisptr
         self.thisptr.m(l)

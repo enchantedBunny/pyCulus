@@ -12,6 +12,7 @@ namespace calc {
 	class Variable {
 		public:
 			int id;
+			int pw;
 			std::string tree[2];
 			Variable *left;
 			Variable *right;
@@ -19,7 +20,7 @@ namespace calc {
 			unsigned short depsList[2][100];
 			unsigned short allOrderedDeps[100];
 			unsigned short countOrderedDeps;
-			char op;
+			std::string op;
 			std::string build();
 			void buildTree();
 			std::string preview();
@@ -30,8 +31,9 @@ namespace calc {
 			void i();
 			void m(Variable *a);
 			void c(float value);
-			std::string f(Variable *a, Variable *b, char *op, bool getDerivs = true);
-			std::string f(Variable *a, char *op, bool getDerivs = true);
+			std::string f(Variable *a, Variable *b, std::string *op, bool getDerivs = true);
+			std::string f(Variable *a, std::string *op, bool getDerivs = true);
+			std::string f(Variable *a, std::string *op, int p, bool getDerivs = true);
 			~Variable();
 			float getValue(float *v);
 			float getValue(float **v, int rows);

@@ -24,14 +24,14 @@ std::string Variable::preview(){
 	if (type == constant)return "c";
 	if (type == independent)return "v" + std::to_string(id);
 	if (type ==  function)return "( " + tree[0]  + " " + op + " " + tree[1] + " )";
-	if (type ==  special && op == 'e')return "( exp" + tree[0] + " )";
+	if (type ==  special)return "( " + op + tree[0] + " )";
 	return "sum( " + tree[0] + " )";
 }
 std::string Variable::build(){
 	if (type == constant)return std::to_string(value);
 	if (type == independent)return "v" + std::to_string(id);
 	if (type ==  function)return "( " + left->build() + " " + op + " " + right->build() + " )";
-	if (type ==  special && op == 'e')return "( exp" + left->build() + " )";
+	if (type ==  special)return "( " + op + left->build() + " )";
 	return "sum( " + left->build() + " )";
 }
 void Variable::buildTree(){
@@ -52,12 +52,12 @@ unsigned short getFirst(std::string &s){
 	}
 	return atoi(out.c_str());
 }
-std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
+std::string Variable::f(Variable *a, Variable *b, std::string *o, bool getDerivs)
 {
 	type = function;
 	left = a;
 	right = b;
-	op = (char)*o;
+	op = *o;
 	buildTree();
 	for (int i = 0;i<2; i++){
 		deps[i] = (unsigned short)std::count(tree[i].begin(), tree[i].end(), 'v');
@@ -92,12 +92,12 @@ std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
 	}
 	countOrderedDeps = n;
 	if (getDerivs){
-		char* add = new char;
-		*add = '+';
-		char* mult = new char;
-		*mult = '*';
+		std::string* add = new std::string;
+		*add = "+";
+		std::string* mult = new std::string;
+		*mult = "*";
 		
-		if (op == '*')
+		if (op == "*")
 		{	
 			if (right->id == left->id){
 				Variable* nlob = new Variable;
@@ -117,25 +117,25 @@ std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
 		Variable* gblob = new Variable;
 		blob->c(1);
 		gblob->c(-1);
-		if (op == '+'){
+		if (op == "+"){
 			directDerivs[0]= blob;
 			directDerivs[1]= blob;
 			cPrint("a+b");
 		}
-		if (op == '-'){
+		if (op == "-"){
 			directDerivs[0]= blob;
 			directDerivs[1]= gblob;
 			cPrint("a-b");
 		}
-		if (op == '/'){
+		if (op == "/"){
 			Variable* flob = new Variable;
-			char* gop = new char;
-			*gop = '/';
+			std::string* gop = new std::string;
+			*gop = "/";
 			flob->f(blob,b, gop, false);	
 			directDerivs[0]= flob;
 			Variable* fglob = new Variable;
-			char* hop = new char;
-			*hop = '*';
+			std::string* hop = new std::string;
+			*hop = "*";
 			fglob->f(gblob,a, hop, false);	 //-a
 			Variable* klob = new Variable;
 			klob->f(b,b, hop, false);     //b*b
@@ -264,28 +264,29 @@ std::string Variable::f(Variable *a, Variable *b, char *o, bool getDerivs)
 				cPrint(wip->preview());
 				//cPrint((*mult=='*')? "yes":"no");
 			}	
-			else cPrint("probably error :D");	
+			else cPrint("probably error :D");
+			cPrint2(derivs[gg]->preview());
 		}
 		
 	}
 	return "This function has " + std::to_string(countOrderedDeps) + " dependencies";
 
 }
-std::string Variable::f(Variable *a, char* o, bool getDerivs)
+std::string Variable::f(Variable *a, std::string* o, bool getDerivs)
 {
 	type = special;
 	left = a;
-	char gop = static_cast<char>(*o);
+	std::string gop = static_cast<std::string>(*o);
 	tree[0] = left->build();
 	op = gop;
-	if (op == 'e')
+	if (op == "exp")
 	{
 		cPrint("wohoo");
 		if (left->type ==function){
-			char* e = new char;
-			*e = 'e';
-			char* mult = new char;
-			*mult = '*';
+			std::string* e = new std::string;
+			*e = "exp";
+			std::string* mult = new std::string;
+			*mult = "*";
 			countOrderedDeps = left->countOrderedDeps;
 			for (int g = 0; g < countOrderedDeps; g++){
 				allOrderedDeps[g] = left->allOrderedDeps[g];
@@ -299,6 +300,7 @@ std::string Variable::f(Variable *a, char* o, bool getDerivs)
 						Variable* wip = new Variable;
 						wip->f(left->derivs[g], wip2, mult, false);
 						derivs[g] = wip;
+						cPrint2(derivs[g]->preview());
 					}
 				}
 			}
@@ -314,6 +316,62 @@ std::string Variable::f(Variable *a, char* o, bool getDerivs)
 	}
 	return "This function has " + std::to_string(countOrderedDeps) + " dependencies";
 
+}
+std::string Variable::f(Variable *a, std::string *o, int p, bool getDerivs){
+	type = special;
+	left = a;
+	std::string gop = static_cast<std::string>(*o);
+	tree[0] = left->build();
+	op = gop;
+	pw = p;
+	std::string* pwt = new std::string;
+	*pwt = "pow";
+	std::string* mult = new std::string;
+	*mult = "*";
+	if (op == "pow")
+	{
+		if (left->type ==function){
+			countOrderedDeps = left->countOrderedDeps;
+			for (int g = 0; g < countOrderedDeps; g++){
+				allOrderedDeps[g] = left->allOrderedDeps[g];
+				cPrint(std::to_string(left->allOrderedDeps[g]));
+			}
+			if (getDerivs){
+				Variable* c1 = new Variable;
+				c1->c(pw);
+				Variable* wip2 = new Variable;
+				wip2->f(left, pwt, pw-1, false);
+				Variable* wip3 = new Variable;
+				wip3->f(wip2, c1, mult, false);
+				for (int g = 0; g < countOrderedDeps; g++){
+					if (getDerivs){
+						Variable* wip = new Variable;
+						wip->f(left->derivs[g], wip3, mult, false);
+						derivs[g] = wip;
+						cPrint2(derivs[g]->preview());
+					}
+				}
+			}
+			
+			cPrint(std::to_string(countOrderedDeps));
+
+		}
+		if (left->type == independent){
+			countOrderedDeps = 1;
+			allOrderedDeps[0] = left->id;
+			if (getDerivs){
+				Variable* c1 = new Variable;
+				c1->c(pw);
+				Variable* wip2 = new Variable;
+				wip2->f(left, pwt, pw-1, false); //x^n-1
+				Variable* wip3 = new Variable;
+				wip3->f(wip2, c1, mult, false);
+				derivs[0] = wip3;
+			}
+		}
+	
+	}
+	return "This function has " + std::to_string(countOrderedDeps) + " dependencies";
 }
 void Variable::m(Variable *a)
 {
@@ -338,11 +396,17 @@ float Variable::getValue(float *v)
    	if (type == constant)return value;
 	if (type == independent)return v[0];
 	if (type == special){
-		float ev = exp(left->getValue(v));
-		cPrint( "I am special" + std::to_string(ev));
-		return ev;
+		if (op == "exp"){
+			float ev = exp(left->getValue(v));
+			cPrint( "I am special" + std::to_string(ev));
+			return ev;
+		}
+		if (op == "pow"){
+			float ev = std::pow(left->getValue(v), pw);
+			return ev;
+		}
 	}
-	if(left->id == right->id && op == '*'){
+	if(left->id == right->id && op == "*"){
 		float lv = left->getValue(v);
 		return lv*lv;
 	}
@@ -366,10 +430,10 @@ float Variable::getValue(float *v)
 	cPrint( "left value is " + std::to_string(lv));
 	cPrint( "right value is " + std::to_string(rv));
 
-	if (op == '+')return  lv + rv;
-	if (op == '-')return  lv - rv;
-	if (op == '*')return  lv * rv;
-	if (op == '/')return  lv / rv;
+	if (op == "+")return  lv + rv;
+	if (op == "-")return  lv - rv;
+	if (op == "*")return  lv * rv;
+	if (op == "/")return  lv / rv;
 	return -42;
 }
 float* Variable::feed(float **v, int rows){
