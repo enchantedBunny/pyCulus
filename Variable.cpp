@@ -382,6 +382,7 @@ float* Variable::feed(float **v, int rows){
 	return fValues;
 }
 float Variable::getDerivValue(int g,float *v){
+	cPrint2("id:" + std::to_string(allOrderedDeps[g]));
 	float* pass = new float[derivs[g]->countOrderedDeps];
 	int help = 0;
 	for (int i=0; i<countOrderedDeps; i++){

@@ -33,6 +33,10 @@ cdef public void cPrint(string s):
     return 
     # print(s.decode('utf8'))
 
+cdef public void cPrint2(string s):
+    #print(s.decode('utf8'))
+    return
+
 import logging
 import logging.handlers
 
