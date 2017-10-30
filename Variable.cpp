@@ -1,6 +1,6 @@
 #include "Variable.h"
 #include <Python.h>
-#include "variable.h"
+#include "master.h"
 using namespace calc;
 // 	cPrint("preview:"); will print preview :)
 Variable::Variable()
