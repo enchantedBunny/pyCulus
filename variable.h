@@ -20,6 +20,7 @@
 
 __PYX_EXTERN_C DL_IMPORT(void) cPrint(std::string);
 __PYX_EXTERN_C DL_IMPORT(void) cPrint2(std::string);
+__PYX_EXTERN_C DL_IMPORT(void) cPrint3(std::string);
 
 #endif /* !__PYX_HAVE_API__pyCalc */
 

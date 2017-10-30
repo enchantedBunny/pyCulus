@@ -35,7 +35,9 @@ cdef public void cPrint(string s):
     # print(s.decode('utf8'))
 
 cdef public void cPrint2(string s):
-    #print(s.decode('utf8'))
+    return
+cdef public void cPrint3(string s):
+    print(s.decode('utf8'))
     return
 
 import logging
@@ -59,6 +61,21 @@ logger.info("PGCG initialised")
 def reduce_mean(pyfloats):
     return sum(pyfloats[0:len(pyfloats)])/len(pyfloats)
 
+class presets:
+    def sigmoid(ag= None):
+        out, a, one, zero, negone,c, c1, c2 = var(),var('i'), var('c', 1), var('c', 0),var('c', -1), var(),var(),var()
+        c2.f(zero, a, '-')
+        c1.exp(c2) #exp(-x)
+        c.f(c1,one,'+') #1+exp(-x)
+        out.f(one, c, '/')
+        out, a, one, zero, negone,c, c1, c2 = var(),var('i'), var('c', 1), var('c', 0),var('c', -1), var(),var(),var()
+        c2.f(zero, a, '-')
+        c1.exp(c2) #exp(-x)
+        c.f(c1,one,'+') #1+exp(-x)
+        out.f(one, c, '/')
+        return out
+
+
 cdef class var:
     cdef:
         int cint
@@ -70,12 +87,15 @@ cdef class var:
         var r
     def preview(self):
         print(self.thisptr.preview().decode('utf8'))
-    def __cinit__(self):
+    def __cinit__(self, type=None, val=None):
         global b
         b +=1
         self.thisptr = Variable()
         self.thisptr.setID(b);
-        print('My id is ',self.thisptr.id)
+        if type == 'i':
+            self.i()
+        if type == 'c':
+            self.c(val)
     def value(self, pyfloats):
         if self.thisptr.type == matrix:
             cfloatses = <float **> malloc(len(pyfloats)*cython.sizeof(float))
@@ -128,19 +148,25 @@ cdef class var:
         s = str.encode(inop)
         cdef Variable *l = &a.thisptr
         cdef Variable *r = &b.thisptr
-        return self.thisptr.f(l, r, &s).decode('utf8')
+        print(self.thisptr.f(l, r, &s).decode('utf8'))
     def exp(self, var a):
         inop = "exp"
         cdef string s
         s = str.encode(inop)
         cdef Variable *l = &a.thisptr
-        return self.thisptr.f(l, &s).decode('utf8')
+        print(self.thisptr.f(l, &s).decode('utf8'))
     def pow(self, var a, int g):
         inop = "pow"
         cdef string s
         s = str.encode(inop)
         cdef Variable *l = &a.thisptr
-        return self.thisptr.f(l, &s, g).decode('utf8')
+        print(self.thisptr.f(l, &s, g).decode('utf8'))
+    def sigmoid(self, var a):
+        inop = "sig"
+        cdef string s
+        s = str.encode(inop)
+        cdef Variable *l = &a.thisptr
+        print(self.thisptr.f(l, &s).decode('utf8'))
     def m(self, var a):
         cdef Variable *l = &a.thisptr
         self.thisptr.m(l)

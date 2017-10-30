@@ -24,6 +24,7 @@ std::string Variable::preview(){
 	if (type == constant)return "c";
 	if (type == independent)return "v" + std::to_string(id);
 	if (type ==  function)return "( " + tree[0]  + " " + op + " " + tree[1] + " )";
+	if (op ==  "pow")cPrint2(std::to_string(pw));
 	if (type ==  special)return "( " + op + tree[0] + " )";
 	return "sum( " + tree[0] + " )";
 }
@@ -269,6 +270,9 @@ std::string Variable::f(Variable *a, Variable *b, std::string *o, bool getDerivs
 		}
 		
 	}
+	if (getDerivs){
+		return "the 0th deriv of this is" + derivs[0]->preview();
+	}
 	return "This function has " + std::to_string(countOrderedDeps) + " dependencies";
 
 }
@@ -279,14 +283,18 @@ std::string Variable::f(Variable *a, std::string* o, bool getDerivs)
 	std::string gop = static_cast<std::string>(*o);
 	tree[0] = left->build();
 	op = gop;
+	std::string* e = new std::string;
+	*e = "exp";
+	std::string* sigmoid = new std::string;
+	*sigmoid = "sig";
+	std::string* mult = new std::string;
+	*mult = "*";
+	std::string* minus = new std::string;
+	*minus = "-";
 	if (op == "exp")
 	{
 		cPrint("wohoo");
 		if (left->type ==function){
-			std::string* e = new std::string;
-			*e = "exp";
-			std::string* mult = new std::string;
-			*mult = "*";
 			countOrderedDeps = left->countOrderedDeps;
 			for (int g = 0; g < countOrderedDeps; g++){
 				allOrderedDeps[g] = left->allOrderedDeps[g];
@@ -296,12 +304,10 @@ std::string Variable::f(Variable *a, std::string* o, bool getDerivs)
 				Variable* wip2 = new Variable;
 				wip2->f(left, e, false);
 				for (int g = 0; g < countOrderedDeps; g++){
-					if (getDerivs){
 						Variable* wip = new Variable;
 						wip->f(left->derivs[g], wip2, mult, false);
 						derivs[g] = wip;
 						cPrint2(derivs[g]->preview());
-					}
 				}
 			}
 			
@@ -311,10 +317,64 @@ std::string Variable::f(Variable *a, std::string* o, bool getDerivs)
 		if (left->type == independent){
 			countOrderedDeps = 1;
 			allOrderedDeps[0] = left->id;
+			if (getDerivs){
+				Variable* wip2 = new Variable;
+				wip2->f(left, e, false);
+				derivs[0] = wip2;
+			}
 		}
 	
 	}
-	return "This function has " + std::to_string(countOrderedDeps) + " dependencies";
+	if (op == "sig")
+	{
+		cPrint("wohoo");
+		if (left->type ==function){
+			countOrderedDeps = left->countOrderedDeps;
+			for (int g = 0; g < countOrderedDeps; g++){
+				allOrderedDeps[g] = left->allOrderedDeps[g];
+				cPrint(std::to_string(left->allOrderedDeps[g]));
+			}
+			if (getDerivs){
+				Variable* wip2 = new Variable;
+				Variable* wip3 = new Variable;
+				Variable* wip4 = new Variable;
+				Variable* wip5 = new Variable;
+				wip2->f(left, sigmoid, false);
+				wip3->c(1);
+				wip4->f(wip3, wip2, minus,false);
+				wip5->f(wip4, wip2, mult,false);
+				for (int g = 0; g < countOrderedDeps; g++){
+						Variable* wip = new Variable;
+						wip->f(left->derivs[g], wip5, mult, false);
+						derivs[g] = wip;
+						cPrint2(derivs[g]->preview());
+				}
+			}
+			
+			cPrint(std::to_string(countOrderedDeps));
+
+		}
+		if (left->type == independent){
+			countOrderedDeps = 1;
+			allOrderedDeps[0] = left->id;
+			if (getDerivs){
+				Variable* wip2 = new Variable;
+				Variable* wip3 = new Variable;
+				Variable* wip4 = new Variable;
+				Variable* wip5 = new Variable;
+				wip2->f(left, sigmoid, false);
+				wip3->c(1);
+				wip4->f(wip3, wip2, minus,false);
+				wip5->f(wip4, wip2, mult,false);
+				derivs[0] = wip5;
+			}
+		}
+	
+	}
+	if (getDerivs){
+		return "the 0th deriv of this is" + derivs[0]->preview();
+	}
+	return "hope" ;
 
 }
 std::string Variable::f(Variable *a, std::string *o, int p, bool getDerivs){
@@ -337,19 +397,25 @@ std::string Variable::f(Variable *a, std::string *o, int p, bool getDerivs){
 				cPrint(std::to_string(left->allOrderedDeps[g]));
 			}
 			if (getDerivs){
-				Variable* c1 = new Variable;
-				c1->c(pw);
-				Variable* wip2 = new Variable;
-				wip2->f(left, pwt, pw-1, false);
-				Variable* wip3 = new Variable;
-				wip3->f(wip2, c1, mult, false);
-				for (int g = 0; g < countOrderedDeps; g++){
-					if (getDerivs){
-						Variable* wip = new Variable;
-						wip->f(left->derivs[g], wip3, mult, false);
-						derivs[g] = wip;
-						cPrint2(derivs[g]->preview());
+					Variable* c1 = new Variable;
+					c1->c(pw);  //3
+					Variable* wip2 = new Variable;
+					Variable* wip3 = new Variable;
+					if (pw == 2){
+						wip3->f(left, c1, mult, false);//2x
 					}
+					else{
+						wip2->f(left, pwt, pw-1, false);//x^2
+						wip3->f(wip2, c1, mult, false);//3x^2
+					}
+					for (int g = 0; g < countOrderedDeps; g++){
+						if (getDerivs){
+							Variable* wip = new Variable;
+							wip->f(left->derivs[g], wip3, mult, false);
+							derivs[g] = wip;
+							cPrint2(derivs[g]->preview());
+						}
+					
 				}
 			}
 			
@@ -371,7 +437,10 @@ std::string Variable::f(Variable *a, std::string *o, int p, bool getDerivs){
 		}
 	
 	}
-	return "This function has " + std::to_string(countOrderedDeps) + " dependencies";
+	if (getDerivs){
+		return "the 0th deriv of this is" + derivs[0]->preview();
+	}
+	return "hope" ;
 }
 void Variable::m(Variable *a)
 {
@@ -398,6 +467,11 @@ float Variable::getValue(float *v)
 	if (type == special){
 		if (op == "exp"){
 			float ev = exp(left->getValue(v));
+			cPrint( "I am special" + std::to_string(ev));
+			return ev;
+		}
+		if (op == "sig"){
+			float ev = 1/(1+exp(-left->getValue(v)));
 			cPrint( "I am special" + std::to_string(ev));
 			return ev;
 		}
@@ -446,8 +520,8 @@ float* Variable::feed(float **v, int rows){
 	return fValues;
 }
 float Variable::getDerivValue(int g,float *v){
-	cPrint2("id:" + std::to_string(allOrderedDeps[g]));
 	float* pass = new float[derivs[g]->countOrderedDeps];
+	cPrint2(derivs[g]->preview());
 	int help = 0;
 	for (int i=0; i<countOrderedDeps; i++){
 		bool inDeriv;

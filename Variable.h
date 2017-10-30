@@ -8,7 +8,6 @@
 #include <math.h>
 namespace calc {
 	enum vType {independent, constant, function, matrix, special};
-	class Deriv;
 	class Variable {
 		public:
 			int id;
@@ -42,11 +41,5 @@ namespace calc {
 			Variable* derivs[100];
 			Variable* directDerivs[2];
 			float getDerivValue(int g,float *v);
-	};
-	class Deriv {
-		public:
-			char op;
-			Variable *left;
-			Variable *right;
 	};
 } 
